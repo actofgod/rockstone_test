@@ -1,0 +1,28 @@
+{
+    "name": "molchanov/rockstone_test",
+    "description": "Тестовое задание для rockstone",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Molchanov",
+            "email": "define.true.false@gmail.com"
+        }
+    ],
+    "private": true,
+    "autoload": {
+        "psr-4": {
+            "RockstoneTest\\": "src",
+            "Test\\RockstoneTest\\": "tests"
+        }
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    }
+}
