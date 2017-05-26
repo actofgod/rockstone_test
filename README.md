@@ -38,7 +38,7 @@ php vendor/bin/phpunit
 
 #### Как использовать
 
-В парсер запросов передайтся текст запроса, в запросе можно использовать плейсхолдеры в виде { name : type }
+В парсер запросов передаётся текст запроса, в запросе можно использовать плейсхолдеры в виде { name : type }
 ```SQL
 SELECT * FROM table WHERE column = {column:smallint}
 ```
@@ -77,7 +77,6 @@ SELECT * FROM table WHERE column = { column }
 Так же QueryParser реализует интерфейс ParameterTypeRegistryInterface, поэтому можно реализовать свой тип данных для
 подставновки в запрос, реализовав интерфейс ParameterTypeInterface, а затем зарегестроровать его, как-то так:
 ```php
-
 $queryParser->registerType('ClassName', 't');
 // теперь можно использовать тип t
 $query = $queryParser->parseQuery('SELECT * FROM { table : t } LIMIT 0, 10');
@@ -86,9 +85,8 @@ $result = $db->execute($query->bindValue('table', 'table_name'));
 
 #### Примеры использования:
 
-Для начала нужно парсер создать, ему нужено соединение с базой данных для эскейпирования строк:
+Для начала нужно парсер создать, ему требуется соединение с базой данных для эскейпирования строк:
 ```php
-
 use \RockstoneTest\Database\FakeDatabaseConnection;
 use \RockstoneTest\Database\QueryParser;
 
@@ -98,7 +96,6 @@ $queryParser = new QueryParser($connection);
 
 А затем можно создавать запросы и как-то с ними работать:
 ```php
-
 $query = $queryParser->parseQuery(
     'SELECT * FROM users WHERE id = { id } AND tmp = { raw : raw } AND e = { tmp : enum_active }'
 );
@@ -113,7 +110,6 @@ echo $sql . PHP_EOL;
 
 Так как метод __toString возвращает текст запроса, можно делать так:
 ```php
-
 $query = $queryParser->parseQuery(
     'SELECT * FROM users WHERE id = { id } AND tmp = { raw : raw } AND e = { tmp : enum_active }'
 );
@@ -126,17 +122,22 @@ echo $query . PHP_EOL;
 // выведет "SELECT * FROM users WHERE id = 5 AND tmp = '%test_test%' AND e = 'N'"
 ```
 
-Для пересеслений есть отдельный тип, с ним можно вытворять такое:
+Для перечислений есть отдельный тип, с ним можно вытворять такое:
 ```php
-
 // если в какой-то таблице есть колонка типа ENUM('Y','N')
 $enum = new \RockstoneTest\Database\Query\ParameterType\EnumType();
 $queryParser->registerType($enum->setOptions('Y', 'N'), 'enum_active');
 
+// теперь существует тип 'enum_active', в качестве значений которого можно передавать только 'Y' или 'N'
 $query = $queryParser->parseQuery('SELECT * FROM users WHERE active = { tmp : enum_active }');
+
 $query->bindValue('tmp', 'N');
 echo $query . PHP_EOL;
 // выведет "SELECT * FROM users WHERE active = 'N'"
+
+$query->bindValue('tmp', 'Y');
+echo $query . PHP_EOL;
+// выведет "SELECT * FROM users WHERE active = 'Y'"
 
 // а тут уже возникнет исключение:
 $query->bindValue('tmp', 'no');
